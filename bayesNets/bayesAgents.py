@@ -94,19 +94,21 @@ def constructBayesNet(gameState):
     edges = []
     variableDomainsDict = {}
     possibleHouses = gameState.getPossibleHouses()
-    i = 0
     "*** YOUR CODE HERE ***"
     edges += [(X_POS_VAR, FOOD_HOUSE_VAR), (X_POS_VAR, GHOST_HOUSE_VAR), (Y_POS_VAR, FOOD_HOUSE_VAR), (Y_POS_VAR, GHOST_HOUSE_VAR)]
-    variableDomainsDict[X_POS_VAR] = X_POS_VALS
-    variableDomainsDict[Y_POS_VAR] = Y_POS_VALS
-    variableDomainsDict[FOOD_HOUSE_VAR] = HOUSE_VALS
-    variableDomainsDict[GHOST_HOUSE_VAR] = HOUSE_VALS
+
+    variableDomainsDict[X_POS_VAR] = tuple(X_POS_VALS)
+    variableDomainsDict[Y_POS_VAR] = tuple(Y_POS_VALS)
+    variableDomainsDict[FOOD_HOUSE_VAR] = tuple(HOUSE_VALS)
+    variableDomainsDict[GHOST_HOUSE_VAR] = tuple(HOUSE_VALS)
+
     for housePos in possibleHouses:
         for obsPos in gameState.getHouseWalls(housePos):
             obsVar = OBS_VAR_TEMPLATE % obsPos
-            obsVars += [obsVar, FOOD_HOUSE_VAR, GHOST_HOUSE_VAR]
+            obsVars += [obsVar]
             edges += [(FOOD_HOUSE_VAR, obsVar), (GHOST_HOUSE_VAR, obsVar)]
             variableDomainsDict[obsVar] = OBS_VALS
+
     variables = [X_POS_VAR, Y_POS_VAR] + HOUSE_VARS + obsVars
     net = bn.constructEmptyBayesNet(variables, edges, variableDomainsDict)
     return net, obsVars
@@ -242,7 +244,13 @@ def getMostLikelyFoodHousePosition(evidence, bayesNet, eliminationOrder):
     (This should be a very short method.)
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    houseDict = {houseVal:0 for houseVal in HOUSE_VALS}
+    prob = inference.inferenceByVariableElimination(bayesNet, FOOD_HOUSE_VAR, evidence, eliminationOrder)
+    for assignment in prob.getAllPossibleAssignmentDicts():
+        houseDict[assignment[FOOD_HOUSE_VAR]] += prob.getProbability(assignment)
+    # get key w/ max val in houseDict
+    return {FOOD_HOUSE_VAR: max(houseDict.iterkeys(), key=(lambda key: houseDict[key]))}
+    # util.raiseNotDefined()
 
 
 class BayesAgent(game.Agent):
@@ -344,8 +352,20 @@ class VPIAgent(BayesAgent):
         rightExpectedValue = 0
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # GHOST_COLLISION_REWARD, WON_GAME_REWARD
+        # inferenceByVariableElimination(bayesNet, queryVariables, evidenceDict, eliminationOrder)
+        infFactor = inference.inferenceByVariableElimination(self.bayesNet, HOUSE_VARS, evidence, eliminationOrder)
 
+        for assignment in infFactor.getAllPossibleAssignmentDicts():
+            prob = infFactor.getProbability(assignment)
+            if assignment[FOOD_HOUSE_VAR] == TOP_LEFT_VAL and assignment[GHOST_HOUSE_VAR] == TOP_RIGHT_VAL:
+                leftExpectedValue += prob * WON_GAME_REWARD
+                rightExpectedValue += prob * GHOST_COLLISION_REWARD
+            elif assignment[GHOST_HOUSE_VAR] == TOP_LEFT_VAL and assignment[FOOD_HOUSE_VAR] == TOP_RIGHT_VAL:
+                leftExpectedValue += prob * GHOST_COLLISION_REWARD
+                rightExpectedValue += prob * WON_GAME_REWARD
+
+        # util.raiseNotDefined()
         return leftExpectedValue, rightExpectedValue
 
     def getExplorationProbsAndOutcomes(self, evidence):
@@ -408,9 +428,11 @@ class VPIAgent(BayesAgent):
         """
 
         expectedValue = 0
-
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        for prob, explorationEvidence in self.getExplorationProbsAndOutcomes(evidence):
+            evidence.update(explorationEvidence)
+            expectedValue += prob*max(self.computeEnterValues(evidence, enterEliminationOrder))
+        # util.raiseNotDefined()
 
         return expectedValue
 
