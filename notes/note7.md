@@ -33,11 +33,14 @@
 ## Properties of VPI
 * __Nonnegativity__
   * Observing new information always allows you to make a _more informed_ decision so MEU can only _increase or stay the same_ (if info is irrelevant)
-  ![equation](http://www.sciweavers.org/tex2img.php?eq=%20%5Cforall%20%28E%27%2C%20e%29%20VPI%28E%27%7Ce%29%20%20%5Cgeq%200&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+    ![equation](http://www.sciweavers.org/tex2img.php?eq=%20%5Cforall%20%28E%27%2C%20e%29%20VPI%28E%27%7Ce%29%20%20%5Cgeq%200&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
 * __Order-independence__
   * same gain in MEU regardless of the order of observing multiple new evidences.
   * makes sense - you don't take an action until you observe the evidences; you can observe all of them at the same time or in some arbitrary sequential order.
-  ![equation](http://www.sciweavers.org/tex2img.php?eq=VPI%28E_%7Bj%7D%2C%20E_%7Bk%7D%7Ce%29%20%20%5Cneq%20VPI%28E_%7Bj%7D%7Ce%29%2BVPI%28E_%7Bk%7D%7Ce%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+    ![equation](http://www.sciweavers.org/tex2img.php?eq=VPI%28E_%7Bj%7D%2C%20E_%7Bk%7D%7Ce%29%20%20%5Cneq%20VPI%28E_%7Bj%7D%7Ce%29%2BVPI%28E_%7Bk%7D%7Ce%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
 * __Nonadditivity__
   * generally observing some new evidence Ej might _change how much we care_ about Ek
-  ![equation](http://www.sciweavers.org/tex2img.php?eq=VPI%28E_%7Bj%7D%2C%20E_%7Bk%7D%7Ce%29%20%3D%20VPI%28E_%7Bj%7D%7Ce%29%2BVPI%28E_%7Bk%7D%7Ce%2C%20E_%7Bj%7D%29%20%3D%20VPI%28E_%7Bk%7D%7Ce%29%2BVPI%28E_%7Bj%7D%7Ce%2C%20E_%7Bk%7D%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+    ![equation](http://www.sciweavers.org/tex2img.php?eq=VPI%28E_%7Bj%7D%2C%20E_%7Bk%7D%7Ce%29%20%3D%20VPI%28E_%7Bj%7D%7Ce%29%2BVPI%28E_%7Bk%7D%7Ce%2C%20E_%7Bj%7D%29%20%3D%20VPI%28E_%7Bk%7D%7Ce%29%2BVPI%28E_%7Bj%7D%7Ce%2C%20E_%7Bk%7D%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
