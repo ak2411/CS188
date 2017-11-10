@@ -28,7 +28,8 @@
 * a mathematical quantification of the value an agent's MEU is expected to increase if it observes some new evidence.
 
   ![equation](http://www.sciweavers.org/tex2img.php?eq=MEU%28e%29%20%3D%20%5Cmax%5Climits_%7Ba%7D%20%5Csum%5Climits_%7Bs%7D%20P%28s%20%7C%20e%29U%28s%2Ca%29%20%5C%5C%0AMEU%28e%2Ce%27%29%20%3D%20%5Cmax%5Climits_%7Ba%7D%20%5Csum%5Climits_%7Bs%7D%20P%28s%20%7C%20e%2C%20e%27%29U%28s%2Ca%29%20%5C%5C%0AMEU%28e%2CE%27%29%20%3D%20%5Csum%5Climits_%7Be%27%7D%20P%28e%27%20%7Ce%29MEU%28e%2Ce%27%29%20%5C%5C%0AVPI%28E%27%7Ce%29%20%3D%20MEU%28e%2C%20E%27%29-MEU%28e%29%0A&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
-* new evidence e' before acting
+
+* new evidence _e'_ before acting
 
 ## Properties of VPI
 * __Nonnegativity__
