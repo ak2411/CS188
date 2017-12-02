@@ -75,7 +75,16 @@ class Graph(object):
         so don't forget to call `self.add` on each of the variables.
         """
         "*** YOUR CODE HERE ***"
+        # input values, output value, and gradient (the latter two will be calculated during the forward and backward pass, respectively).
+        # This information should be stored in attributes of the graph object,
+        # so that it can be accessed with the methods get_inputs, get_output, and get_gradient
+        self.nodes = []
+        self.output = {}
+        self.gradient = {}
         #keep track of all get_nodes and the order they are added to the graph
+        #trainable parameter or an input to the computation
+        for var in variables:
+            self.add(var)
 
     def get_nodes(self):
         """
@@ -86,6 +95,7 @@ class Graph(object):
         Returns: a list of nodes
         """
         "*** YOUR CODE HERE ***"
+        return self.nodes
 
     def get_inputs(self, node):
         """
@@ -97,6 +107,10 @@ class Graph(object):
         Hint: every node has a `.get_parents()` method
         """
         "*** YOUR CODE HERE ***"
+        parent_list = []
+        for parent in node.get_parents():
+            parent_list += [self.output[parent]]
+        return parent_list
 
     def get_output(self, node):
         """
@@ -106,6 +120,7 @@ class Graph(object):
         Returns: a numpy array or a scalar
         """
         "*** YOUR CODE HERE ***"
+        return self.output[node]
 
     def get_gradient(self, node):
         """
@@ -121,6 +136,7 @@ class Graph(object):
         Returns: a numpy array
         """
         "*** YOUR CODE HERE ***"
+        return self.gradient[node]
 
     def add(self, node):
         """
@@ -135,7 +151,16 @@ class Graph(object):
         accumulator for the node, with correct shape.
         """
         "*** YOUR CODE HERE ***"
-
+        # The add method should:
+        #
+        # Store a node in the Graph object
+        # Run the step of the forward pass for that node
+        # Calculate the node's output using the inputs to the node
+        # Store the node's output value inside the Graph object (to be used by its child nodes when they are added to the graph).
+        # Initialize and store a accumulator for the node's gradient
+        self.nodes += [node]
+        self.output[node] = node.forward(self.get_inputs(node))
+        self.gradient[node] = np.zeros_like(self.output[node])
 
     def backprop(self):
         """
@@ -153,6 +178,12 @@ class Graph(object):
         assert np.asarray(self.get_output(loss_node)).ndim == 0
 
         "*** YOUR CODE HERE ***"
+        self.gradient[self.nodes[-1]] = float(1)
+        for node in reversed(self.nodes):
+            backward = node.backward(self.get_inputs(node), self.gradient[node])
+            parents = node.get_parents()
+            for it, parent in enumerate(parents):
+                self.gradient[parent] += backward[it]
 
     def step(self, step_size):
         """
@@ -163,6 +194,9 @@ class Graph(object):
         Hint: each Variable has a `.data` attribute
         """
         "*** YOUR CODE HERE ***"
+        for node in self.nodes:
+            if node.get_parents() == []:
+                node.data = node.data-(self.gradient[node]*step_size)
 
 class DataNode(object):
     """
