@@ -75,6 +75,7 @@ class Graph(object):
         so don't forget to call `self.add` on each of the variables.
         """
         "*** YOUR CODE HERE ***"
+        #keep track of all get_nodes and the order they are added to the graph
 
     def get_nodes(self):
         """
@@ -134,6 +135,7 @@ class Graph(object):
         accumulator for the node, with correct shape.
         """
         "*** YOUR CODE HERE ***"
+
 
     def backprop(self):
         """
@@ -259,10 +261,14 @@ class Add(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
+        return inputs[0]+inputs[1]
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+        #one np.array per parent node
+        #same shape as the parent node's output value
+        return [np.array(gradient), np.array(gradient)]
 
 class MatrixMultiply(FunctionNode):
     """
@@ -277,10 +283,12 @@ class MatrixMultiply(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
+        return np.dot(inputs[0], inputs[1])
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+        return [np.dot(np.array(gradient),np.array(inputs[1]).T), np.dot(np.array(inputs[0]).T,np.array(gradient))]
 
 class MatrixVectorAdd(FunctionNode):
     """
@@ -295,10 +303,16 @@ class MatrixVectorAdd(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
+        return inputs[0]+inputs[1]
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+        # gradient*np.ones(inputs[0].shape)
+        return [
+            gradient,
+            np.dot(gradient.T, np.ones(gradient.shape[0]))
+        ]
 
 class ReLU(FunctionNode):
     """
@@ -313,11 +327,19 @@ class ReLU(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
+        # print np.maximum(inputs[0], np.zeros_like(inputs[0]))
+        return np.maximum(inputs[0], np.zeros_like(inputs[0]))
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
-
+        # [np.maximum(inputs[0], np.zeros_like(inputs[0]))]
+        #.tolist()
+        x = np.where(inputs[0].flatten()<0)
+        shape = gradient.shape
+        a = gradient.flatten()
+        np.put(a, x, [0])
+        return [a.reshape(shape)]
 class SquareLoss(FunctionNode):
     """
     Inputs: [a, b]
@@ -333,10 +355,14 @@ class SquareLoss(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
+        new_matrix = 0.5 * (inputs[0]-inputs[1])**2
+        return new_matrix.mean()
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+        size = inputs[0].shape[0]*inputs[0].shape[1]
+        return [(inputs[0]-inputs[1])*gradient/size, (inputs[1]-inputs[0])*gradient/size]
 
 class SoftmaxLoss(FunctionNode):
     """
